@@ -1,11 +1,11 @@
 let countPrayers = 0;
 let code = ``;
 let prayers = [
-    {name: 'ФАДЖР', id:'fajr', count: 0},
-    {name: 'ЗУХР', id:'zuhr', count: 0},
-    {name: 'АСР', id:'asr', count: 0},
-    {name: 'МАГРИБ', id:'magrib', count: 0},
-    {name: 'ИША', id:'isha', count: 0},
+    {name: 'ФАДЖР', id:'fajr', count: ''},
+    {name: 'ЗУХР', id:'zuhr', count: ''},
+    {name: 'АСР', id:'asr', count: ''},
+    {name: 'МАГРИБ', id:'magrib', count: ''},
+    {name: 'ИША', id:'isha', count: ''},
 ]
 
 function plus(id) {
@@ -32,13 +32,16 @@ function minus(id) {
 
 function update() {
     for (prayer of prayers) {
-    code += `
-    <div class="prayer" id="${prayer.id}">
-        <p class="name">${prayer.name}</p>
+        var id = prayer.id;
+        var name = prayer.name;
+        var count = prayer.count;
+        code += `
+    <div class="prayer" id="${id}">
+        <p class="name">${name}</p>
         <div class="change">
-            <input type="text" class="input" value="${prayer.count}">
-            <button class="changeCount" onclick="plus(${prayer.id}), countPrayersFun()">+</button>
-            <button class="changeCount" onclick="minus(${prayer.id}), countPrayersFun()">-</button>
+            <input type="text" id="${setID(id)}" class="input" value="${count}" onclick="enter(${setID(id)})">
+            <button class="changeCount" onclick="plus(${id}), countPrayersFun()">+</button>
+            <button class="changeCount" onclick="minus(${id}), countPrayersFun()">-</button>
         </div>
     </div>
     `
@@ -53,9 +56,37 @@ function nul() {
 
 function countPrayersFun() {
     for (prayer of prayers) {
-        countPrayers += prayer.count;
+        countPrayers += Number(prayer.count);
     }
     document.getElementById('counter').innerHTML=`<p class="count">ИТОГО:</p>
     <p class="count" id="count">${countPrayers}</p>`
     countPrayers = 0;
+}
+
+function setID(id) {
+    return 'input_' + id;
+}
+
+function setCount(id) {
+    var input = document.getElementById(id);
+    for (prayer of prayers) {
+        if ((id == `input_${prayer.id}`) & (input.value >= 0)) {
+            prayer.count = input.value;
+            
+        }
+    }
+    nul();
+    update();
+    countPrayersFun();
+}
+
+function enter(id) {
+    var input = document.getElementById(id.id);
+    console.log(input)
+    input.addEventListener('keypress', function(e){
+      if(e.which === 13){
+      	e.preventDefault();
+            setCount(id.id);
+      }
+    });
 }
