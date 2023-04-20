@@ -1,11 +1,16 @@
+let fajrPrayer = Number(JSON.parse(localStorage.fajr).count);
+let zuhrPrayer = Number(JSON.parse(localStorage.zuhr).count);
+let asrPrayer = Number(JSON.parse(localStorage.asr).count);
+let magribPrayer = Number(JSON.parse(localStorage.magrib).count);
+let ishaPrayer = Number(JSON.parse(localStorage.isha).count);
 let countPrayers = 0;
 let code = ``;
 let prayers = [
-    {name: 'ФАДЖР', id:'fajr', count: ''},
-    {name: 'ЗУХР', id:'zuhr', count: ''},
-    {name: 'АСР', id:'asr', count: ''},
-    {name: 'МАГРИБ', id:'magrib', count: ''},
-    {name: 'ИША', id:'isha', count: ''},
+    {name: 'ФАДЖР', id:'fajr', count: fajrPrayer},
+    {name: 'ЗУХР', id:'zuhr', count: zuhrPrayer},
+    {name: 'АСР', id:'asr', count: asrPrayer},
+    {name: 'МАГРИБ', id:'magrib', count: magribPrayer},
+    {name: 'ИША', id:'isha', count: ishaPrayer},
 ]
 
 function plus(id) {
@@ -14,6 +19,8 @@ function plus(id) {
             prayer.count++;
         }
     }
+    storage();
+    countPrayersFun()
     nul();
     update();
 }
@@ -26,6 +33,8 @@ function minus(id) {
             }
         }
     }
+    storage();
+    countPrayersFun()
     nul();
     update();
 }
@@ -56,10 +65,13 @@ function nul() {
 
 function countPrayersFun() {
     for (prayer of prayers) {
-        countPrayers += Number(prayer.count);
+        countPrayers += prayer.count;
     }
+    localStorage.setItem('count', JSON.stringify(countPrayers));
     document.getElementById('counter').innerHTML=`<p class="count">ИТОГО:</p>
-    <p class="count" id="count">${countPrayers}</p>`
+    <p class="count" id="count">${localStorage.count}</p>`
+    nul()
+    update()
     countPrayers = 0;
 }
 
@@ -70,11 +82,11 @@ function setID(id) {
 function setCount(id) {
     var input = document.getElementById(id);
     for (prayer of prayers) {
-        if ((id == `input_${prayer.id}`) & (input.value >= 0)) {
-            prayer.count = input.value;
-            
+        if ((id == `input_${prayer.id}`) & (Number(input.value) >= 0)) {
+            prayer.count = Number(input.value);
         }
     }
+    storage();
     nul();
     update();
     countPrayersFun();
@@ -82,11 +94,38 @@ function setCount(id) {
 
 function enter(id) {
     var input = document.getElementById(id.id);
-    console.log(input)
     input.addEventListener('keypress', function(e){
       if(e.which === 13){
       	e.preventDefault();
             setCount(id.id);
       }
     });
+}
+
+function storage() {
+    for (prayer of prayers) {
+        switch (prayer.id) {
+            case 'fajr':
+                setStorage(prayer, 'fajr');
+                break;
+            case 'zuhr':
+                setStorage(prayer, 'zuhr')
+                break;
+            case 'asr':
+                setStorage(prayer, 'asr')
+                break;
+            case 'magrib':
+                setStorage(prayer, 'magrib')
+                break;
+            case 'isha':
+                setStorage(prayer, 'isha')
+                break;
+                
+        }
+    }
+}
+
+function setStorage(pray, check) {
+    let prayer = pray;
+    localStorage.setItem(check, JSON.stringify(prayer));
 }
