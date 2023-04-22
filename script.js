@@ -129,3 +129,4 @@ function setStorage(pray, check) {
     let prayer = pray;
     localStorage.setItem(check, JSON.stringify(prayer));
 }
+
